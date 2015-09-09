@@ -1,18 +1,8 @@
 function loadPullRequestTemplate() {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
+  chrome.storage.sync.get("pr_template_body", function (obj) {
       var el = document.getElementById('pull_request_body');
       if (el !== null) {
-        el.innerText = xhr.responseText;
+        el.innerText = obj.pr_template_body;
       }
-    }
-  };
-
-  chrome.storage.sync.get("pr_template_url", function (obj) {
-    xhr.open("GET",
-      obj.pr_template_url,
-      true);
-    xhr.send();
   });
 };

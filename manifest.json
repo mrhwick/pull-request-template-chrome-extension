@@ -30,7 +30,7 @@
   ],
   "page_action": {
     "default_icon" : "icon48.png",
-    "default_title": "Start Event Page"
+    "default_title": "Add Template"
   },
   "manifest_version": 2
 }
