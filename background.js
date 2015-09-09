@@ -25,6 +25,20 @@ chrome.runtime.onInstalled.addListener(function() {
       }
     ]);
   });
+
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      var obj = {};
+      obj["pr_template_body"] = xhr.responseText || ""; 
+      chrome.storage.sync.set(obj);
+    }
+  };
+  xhr.open("GET",
+    "https://raw.github.com/bellhops/pull-request-template-chrome-extension/master/default_template.md",
+    true);
+  xhr.send();
+
 });
 
 chrome.pageAction.onClicked.addListener(function(tab) {
