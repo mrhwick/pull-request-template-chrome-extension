@@ -3,6 +3,25 @@
 // found in the LICENSE file.
 
 
+// On every start up ...
+chrome.runtime.onStartup.addListener(function() {
+  chrome.storage.sync.get('pr_template_body', function (obj) {
+    if (obj[key] == null || obj['changed_template'] == null) {
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          var obj = {};
+          obj["pr_template_body"] = xhr.responseText || ""; 
+          chrome.storage.sync.set(obj);
+        }
+      };
+      xhr.open("GET",
+        "https://raw.github.com/bellhops/pull-request-template-chrome-extension/master/default_template.md",
+        true);
+      xhr.send();
+    }
+  });
+});
 
 
 // When the extension is installed or upgraded ...
@@ -25,20 +44,6 @@ chrome.runtime.onInstalled.addListener(function() {
       }
     ]);
   });
-
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      var obj = {};
-      obj["pr_template_body"] = xhr.responseText || ""; 
-      chrome.storage.sync.set(obj);
-    }
-  };
-  xhr.open("GET",
-    "https://raw.github.com/bellhops/pull-request-template-chrome-extension/master/default_template.md",
-    true);
-  xhr.send();
-
 });
 
 chrome.pageAction.onClicked.addListener(function(tab) {

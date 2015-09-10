@@ -2,7 +2,8 @@ var key = "pr_template_body";
 
 function change_url(e) {
   var obj = {};
-  obj[key] = e.target.value || ""; 
+  obj[key] = e.target.value || "";
+  obj['changed_template'] = true;
   chrome.storage.sync.set(obj);
 }
 
