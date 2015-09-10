@@ -5,8 +5,11 @@
 
 // On every start up ...
 chrome.runtime.onStartup.addListener(function() {
+
+  // Load the default template whenever chrome starts after that and we're not using a custom template.
+
   chrome.storage.sync.get('pr_template_body', function (obj) {
-    if (obj[key] == null || obj['changed_template'] == null) {
+    if (obj['pr_template_body'] == null || obj['changed_template'] == null) {
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
@@ -21,6 +24,34 @@ chrome.runtime.onStartup.addListener(function() {
       xhr.send();
     }
   });
+});
+
+// When the first window is created ...
+
+chrome.windows.onCreated.addListener(function() {
+    chrome.windows.getAll(function(windows) {
+        if (windows.length == 1) {
+
+          // Load the default template whenever chrome starts after that and we're not using a custom template.
+
+          chrome.storage.sync.get('pr_template_body', function (obj) {
+            if (obj['pr_template_body'] == null || obj['changed_template'] == null) {
+              var xhr = new XMLHttpRequest();
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                  var obj = {};
+                  obj["pr_template_body"] = xhr.responseText || ""; 
+                  chrome.storage.sync.set(obj);
+                }
+              };
+              xhr.open("GET",
+                "https://raw.github.com/bellhops/pull-request-template-chrome-extension/master/default_template.md",
+                true);
+              xhr.send();
+            }
+          });
+        }
+    });
 });
 
 
@@ -43,6 +74,25 @@ chrome.runtime.onInstalled.addListener(function() {
         actions: [ new chrome.declarativeContent.ShowPageAction() ]
       }
     ]);
+  });
+
+  // Load the default template the first time we install.
+
+  chrome.storage.sync.get('pr_template_body', function (obj) {
+    if (obj['pr_template_body'] == null || obj['changed_template'] == null) {
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          var obj = {};
+          obj["pr_template_body"] = xhr.responseText || ""; 
+          chrome.storage.sync.set(obj);
+        }
+      };
+      xhr.open("GET",
+        "https://raw.github.com/bellhops/pull-request-template-chrome-extension/master/default_template.md",
+        true);
+      xhr.send();
+    }
   });
 });
 

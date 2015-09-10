@@ -9,13 +9,17 @@ function change_url(e) {
 
 function restore_options() {
   chrome.storage.sync.get(key, function (obj) {
-    if (obj[key] == null) {
+    if (obj[key] == null || obj['changed_template'] == null) {
       load_default_from_url();
     }
     else {
       document.getElementById("template_body").value = obj[key];
     }
   });
+  var obj = {};
+  obj['pr_template_body'] = document.getElementById("template_body").value;
+  obj['changed_template'] = null;
+  chrome.storage.sync.set(obj);
 }
 
 function load_default_from_url() {
